@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Save & Share With URL</title>
+
+    <style>
+        body {
+            margin: 0;
+        }
+        
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .textbox {
+            position: relative;
+            width: calc(100% - 2em);
+            height: 25px;
+            margin-left: 1em;
+            margin-top: 2em;
+            font-size: 25px;
+            background-color: #d5d5d51c;
+            color: black;
+            border: none;
+            border-bottom: 2px solid #0000007e;
+            outline: none;
+        }
+        
+        .raise:hover {
+            border-color: #ff7f10;
+            color: rgb(255, 83, 57);
+            background: #ffe6d1;
+        }
+        
+        button {
+            color: #ff9f1c;
+            transition: 0.25s;
+            background: none;
+            border: 2px solid;
+            font: inherit;
+            line-height: 1;
+            margin: 2em;
+            padding: 1em 2em;
+        }
+    </style>
+
+</head>
+
+<body style="background: #ffffff">
+
+    <div class=container>
+        <textarea rows={1} spellcheck="false" class="textbox" oninput="resize(this)"></textarea>
+    </div>
+
+    <button class="raise">리셋</button>
+
+    <script>
+        var txt = "";
+        const DEFAULT_HEIGHT = 0;
+
+        function resize(obj) {
+            obj.style.height = '1px';
+            obj.style.height = (0 + obj.scrollHeight) + 'px';
+        }
+
+        //로드시 url에서 갖고오기
+        const urlParams = new URLSearchParams(window.location.search);
+        const myParam = urlParams.get('a');
+        // url에 뭐가 있으면
+        if (myParam != null) {
+            let 저장된텍스트 = decodeURIComponent(window.atob(myParam));
+            txt = [...저장된텍스트]
+            console.log(저장된텍스트);
+            document.querySelector('.textbox').value = 저장된텍스트
+            resize(document.querySelector('.textbox'));
+        } else {
+            txt = "";
+        }
+
+        //변경시 url 수정
+        document.querySelector('.textbox').onkeyup = function() {
+                // console.log(this.value);
+                let save = window.btoa(encodeURIComponent(this.value));
+                window.history.pushState({}, null, '?a=' + save);
+            }
+            // reset
+        document.querySelector('button').addEventListener('click', function(e) {
+            document.querySelector('.textbox').value = "";
+            window.history.pushState({}, null, '?a=');
+            resize(document.querySelector('.textbox'));
+        })
+    </script>
+
+</body>
+
+</html>
